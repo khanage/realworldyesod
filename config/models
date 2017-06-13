@@ -12,5 +12,11 @@ Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived
     userId UserId Maybe
     deriving Eq
     deriving Show
+Following
+  followed UserId
+  follower UserId
+  UniqueFollowing followed follower
+  deriving Eq
+  deriving Show
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

@@ -98,22 +98,7 @@ instance Yesod App where
 
     -- The page to be redirected to when authentication is required.
     authRoute _ = Nothing
-
-    isAuthorized HomeR _ = pure Authorized
-    isAuthorized (StaticR _) _ = pure Authorized
-    isAuthorized (UserProfileApiR _) _ = pure Authorized
-    isAuthorized LoginApiR _ = pure Authorized
-    isAuthorized UserApiR _ = do
-      method <- waiRequest <&> requestMethod
-      $logDebug $ "Authorizing method " <> tshow method
-      case method of
-        "GET" -> requireValidJwt
-        "POST" -> pure Authorized
-        "PUT" -> requireValidJwt
-        unknownMethod -> do
-          let msg = "Failed to deal with method " <> tshow unknownMethod
-          $logInfo msg
-          pure $ Unauthorized ""
+    isAuthorized = checkAuthorization
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -197,6 +182,31 @@ instance YesodAuth App where
       let mUserId = userIdFromToken =<< token
       $logDebug $ "Token found in jwt: " <> tshow mUserId
       pure mUserId
+
+-- | Authorize requests. This is called from the instance implementation, seemed a bit tidier.
+checkAuthorization
+  :: Route App
+  -> Bool
+  -> Handler AuthResult
+checkAuthorization route _writeReq =
+  case route of
+    HomeR -> pure Authorized
+    (StaticR _) -> pure Authorized
+    (UserProfileApiR _) -> pure Authorized
+    LoginApiR -> pure Authorized
+    (UserFollowApiR _) -> requireValidJwt
+    UserApiR -> do
+      method <- waiRequest <&> requestMethod
+      $logDebug $ "Authorizing method " <> tshow method
+      case method of
+        "GET" -> requireValidJwt
+        "POST" -> pure Authorized
+        "PUT" -> requireValidJwt
+        unknownMethod -> do
+          let msg = "Failed to deal with method " <> tshow unknownMethod
+          $logInfo msg
+          pure $ Unauthorized ""
+
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult

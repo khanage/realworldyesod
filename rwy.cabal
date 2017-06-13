@@ -28,6 +28,7 @@ library
                      JwtKeys
                      Handler.Home
                      Handler.UserApi
+                     Handler.FollowUser
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

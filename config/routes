@@ -4,3 +4,4 @@
 /api/users UserApiR GET POST PUT
 /api/users/login LoginApiR POST
 /api/profiles/#Text UserProfileApiR GET
+/api/profiles/#Text/follow UserFollowApiR POST DELETE
