@@ -85,9 +85,7 @@ userIdFromToken jwt =
   in mValue jwt >>= Aeson.parseMaybe parseJSON
 
 maybeJwtHeader
-  :: MonadHandler m
-  => MonadLogger m
-  => MonadJwtGen m
+  :: (MonadHandler m, MonadLogger m, MonadJwtGen m)
   => m (Maybe (JWT VerifiedJWT))
 maybeJwtHeader = do
     $logDebug "Looking up header"
