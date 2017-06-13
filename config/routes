@@ -1,0 +1,6 @@
+/static StaticR Static appStatic
+
+/ HomeR GET
+/api/users UserApiR GET POST PUT
+/api/users/login LoginApiR POST
+/api/profiles/#Text UserProfileApiR GET

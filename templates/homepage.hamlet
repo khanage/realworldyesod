@@ -1,0 +1,24 @@
+<div .masthead>
+    <div .container>
+        <div .row>
+            <h1 .header>
+                Yesod—a modern framework for blazing fast websites
+            <h2>
+                Fast, stable & spiced with great community
+            <a href="http://www.yesodweb.com/book/" .btn.btn-info.btn-lg>
+                Read the Book
+   <hr>
+
+    <!-- Testing
+       ================================================== -->
+    <div .bs-docs-section>
+       <div .row>
+           <div .col-lg-12>
+               <div .page-header>
+                   <h1 #test>Testing
+
+                   <p>
+                       And last but not least, Testing. In <tt>test/Spec.hs</tt> you will find a #
+                       test suite that performs tests on this page.
+                   <p>
+                       You can run your tests by doing: <code>stack test</code>
