@@ -4,7 +4,7 @@ module Import.NoFoundation
     , lookupHeader404
     ) where
 
-import ClassyPrelude.Yesod       as Import
+import ClassyPrelude.Yesod       as Import hiding (logDebug, logError, logWarn, logInfo)
 import Control.Lens              as Import hiding (Index, cons, index, snoc,
                                             uncons, unsnoc, (.=), (<.), (<.>),
                                             (<|), (|>))
@@ -15,7 +15,7 @@ import Settings.StaticFiles      as Import
 import Yesod.Auth                as Import
 import Yesod.Core.Types          as Import (loggerSet)
 import Yesod.Default.Config2     as Import
-
+import Control.Monad.Logger.CallStack as Import (logDebug, logInfo, logWarn, logError)
 import Data.CaseInsensitive
 
 lookupHeader404 :: MonadHandler m => CI ByteString -> m ByteString

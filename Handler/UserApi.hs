@@ -14,22 +14,22 @@ getUserProfileApiR
 getUserProfileApiR name = do
   Entity _ user <- runDB $ getBy404 $ UniqueUser name
   let profile = userToProfile user
-  $logDebug $ "getUserProfileR: Got user: " <> tshow profile
+  logDebug $ "Got user: " <> tshow profile
   pure $ toJSON profile
 
 -- | Return the profile of the currently logged in user.
 getUserApiR :: Handler Value
 getUserApiR = do
-  $logDebug "getUserApiR: Loading auth"
+  logDebug "Loading auth"
   authId <- requireAuthId
 
-  $logDebug $ "getUserApiR: Auth loaded"
+  logDebug $ "Auth loaded"
   runDB $ get authId >>= maybe (notFoundUser authId) foundUser
 
   where
     foundUser = pure . toJSON . userToProfile
     notFoundUser authId = do
-      $logError $ "getUserApiR: Could not find user that was logged in as " <> tshow authId
+      logError $ "Could not find user that was logged in as " <> tshow authId
       emptyResponseStatus serverErrorStatus
 
 -- | Create a new user.
@@ -53,18 +53,18 @@ postUserApiR = do
 -- | Update a given user.
 putUserApiR :: Handler Value
 putUserApiR = do
-  $logDebug $ "putUserApiR: Loading `IncomingUserUpdate`"
+  logDebug $ "Loading `IncomingUserUpdate`"
   incomingUser :: IncomingUserUpdate <- requireJsonBody
 
   let username = uniqueUsername incomingUser
       updates = updatesToMake incomingUser
-  $logDebug $ "putUserApiR: updates: " <> tshow updates
+  logDebug $ "Updates: " <> tshow updates
 
   user <- loadAndUpdate username updates
-  $logDebug $ "putUserApiR: loaded user and updates"
+  logDebug $ "Loaded user and updates"
 
   token <- genJwtFor user
-  $logDebug $ "putUserApiR: token generated"
+  logDebug $ "Token generated"
 
   pure $ toJSON $ apiUser token $ entityVal user
 

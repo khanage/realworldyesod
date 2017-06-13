@@ -25,7 +25,7 @@ jwtAuth =
   AuthPlugin "jwt" dispatch login
   where
     dispatch _method _key = do
-      $logDebug $ "Checking authpluin dispatch"
+      logDebug $ "Checking authpluin dispatch"
       notFound
     login = error "Not implemented"
 
@@ -35,7 +35,7 @@ jwtExpiryAfterMinutes
   -> m NumericDate
 jwtExpiryAfterMinutes m = do
   now <- liftIO getCurrentTime
-  $logDebug $ "Creating expiry for " <> tshow now
+  logDebug $ "Creating expiry for " <> tshow now
   let addedTime = fromInteger $ m * 60
       total = utcTimeToPOSIXSeconds $ addUTCTime addedTime now
   pure $ case numericDate total of
@@ -49,7 +49,7 @@ jwtStillValid
 jwtStillValid date = do
   now <- liftIO $ utcTimeToPOSIXSeconds <$> getCurrentTime
   let expiry = secondsSinceEpoch date
-  $logDebug $ "Comparing now: ("<> tshow now <>") to expiry ("<> tshow expiry <>")" <> tshow (now < expiry)
+  logDebug $ "Comparing now: ("<> tshow now <>") to expiry ("<> tshow expiry <>")" <> tshow (now < expiry)
   pure $ now < expiry
 
 requireValidJwt
@@ -57,9 +57,9 @@ requireValidJwt
   => m AuthResult
 requireValidJwt = do
   jwt <- jwtOr401
-  $logDebug $ "JWT: " <> tshow jwt
+  logDebug $ "JWT: " <> tshow jwt
   authResult <- jwtCurrent jwt
-  $logDebug $ "Auth result: " <> tshow authResult
+  logDebug $ "Auth result: " <> tshow authResult
   pure authResult
 
 jwtCurrent
@@ -70,9 +70,9 @@ jwtCurrent jwt =
   case JWT.exp (claims jwt) of
     Nothing -> pure $ Unauthorized "No expiry found"
     Just expiry -> do
-      $logDebug $ "Checking if expiry " <> tshow expiry <> " is still valid"
+      logDebug $ "Checking if expiry " <> tshow expiry <> " is still valid"
       valid <- jwtStillValid expiry
-      $logDebug $ "Expiry valid? " <> tshow valid
+      logDebug $ "Expiry valid? " <> tshow valid
       pure $ if valid then Authorized else Unauthorized "Expired based on jwt"
 
 userIdFromToken
@@ -88,13 +88,13 @@ maybeJwtHeader
   :: (MonadHandler m, MonadLogger m, MonadJwtGen m)
   => m (Maybe (JWT VerifiedJWT))
 maybeJwtHeader = do
-    $logDebug "Looking up header"
+    logDebug "Looking up header"
     rawJwt <- lookupHeader "Authorization"
     let
         toDrop = length ("Bearer " :: Text)
         trimBearer = drop toDrop
         textJwt = trimBearer . decodeUtf8 <$> rawJwt
-    $logDebug $ "Raw header: " <> tshow textJwt
+    logDebug $ "Raw header: " <> tshow textJwt
     maybe (pure Nothing) decodeJwt textJwt
 
 jwtOr401
@@ -102,5 +102,5 @@ jwtOr401
   => m (JWT VerifiedJWT)
 jwtOr401 = do
   mjwt <- maybeJwtHeader
-  $logDebug $ "jwtOr401: " <> tshow mjwt
+  logDebug $ "jwtOr401: " <> tshow mjwt
   maybe notAuthenticated pure mjwt

@@ -152,7 +152,7 @@ instance YesodAuth App where
     redirectToReferer _ = True
 
     authenticate creds = do
-      $logDebug $ "Checking authenticate credentials of " <> tshow creds
+      logDebug $ "Checking authenticate credentials of " <> tshow creds
       runDB $ do
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
@@ -173,14 +173,14 @@ instance YesodAuth App where
     authHttpManager = getHttpManager
 
     getAuthId creds = do
-      $logDebug $ "Getting auth id for creds: " <> tshow creds
+      logDebug $ "Getting auth id for creds: " <> tshow creds
       pure $ Nothing
 
     maybeAuthId = do
-      $logDebug $ "Looking up auth id from token"
+      logDebug $ "Looking up auth id from token"
       token <- maybeJwtHeader
       let mUserId = userIdFromToken =<< token
-      $logDebug $ "Token found in jwt: " <> tshow mUserId
+      logDebug $ "Token found in jwt: " <> tshow mUserId
       pure mUserId
 
 -- | Authorize requests. This is called from the instance implementation, seemed a bit tidier.
@@ -197,21 +197,21 @@ checkAuthorization route _writeReq =
     (UserFollowApiR _) -> requireValidJwt
     UserApiR -> do
       method <- waiRequest <&> requestMethod
-      $logDebug $ "Authorizing method " <> tshow method
+      logDebug $ "Authorizing method " <> tshow method
       case method of
         "GET" -> requireValidJwt
         "POST" -> pure Authorized
         "PUT" -> requireValidJwt
         unknownMethod -> do
           let msg = "Failed to deal with method " <> tshow unknownMethod
-          $logInfo msg
+          logInfo msg
           pure $ Unauthorized ""
 
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
 isAuthenticated = do
-  $logDebug "Checking isAuthenticated"
+  logDebug "Checking isAuthenticated"
   muid <- maybeAuthId
   return $ case muid of
     Nothing -> Unauthorized "You must login to access this page"
