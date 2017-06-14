@@ -29,6 +29,7 @@ library
                      Handler.Home
                      Handler.UserApi
                      Handler.FollowUser
+                     Handler.Tags
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

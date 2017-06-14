@@ -1,22 +1,53 @@
+ -- By default this file is used in Model.hs (which is imported by Foundation.hs)
 User
-    ident Text
-    password Password
-    email Text
-    bio Text Maybe
-    image Text Maybe
-    UniqueUser ident
-    UniqueEmail email
-    deriving Typeable
-Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
-    message Text
-    userId UserId Maybe
-    deriving Eq
-    deriving Show
+  ident Text
+  password Password
+  email Text
+  bio Text Maybe
+  image Text Maybe
+  UniqueUser ident
+  UniqueEmail email
+  deriving Typeable
+Comment
+  message Text
+  userId UserId Maybe
+  deriving Eq
+  deriving Show
 Following
   followed UserId
   follower UserId
   UniqueFollowing followed follower
   deriving Eq
   deriving Show
-
- -- By default this file is used in Model.hs (which is imported by Foundation.hs)
+Article
+  authorId UserId
+  slug Text
+  description Text
+  body Text
+  createdAt UTCTime
+  updatedAt UTCTime
+  deriving Eq
+  deriving Show
+Tag
+  name Text
+  UniqueTag name
+  deriving Eq
+  deriving Show
+UserFavorite
+  user UserId
+  article ArticleId
+  UniqueFavorite user article
+  deriving Eq
+  deriving Show
+Article_Tag
+  article ArticleId
+  tag TagId
+  UniqueArticleTag article tag
+  deriving Eq
+  deriving Show
+Article_Author
+  author UserId
+  article ArticleId
+  UniqueArtilce article
+  deriving Eq
+  deriving Show

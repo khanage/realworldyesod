@@ -5,3 +5,5 @@
 /api/users/login LoginApiR POST
 /api/profiles/#Text UserProfileApiR GET
 /api/profiles/#Text/follow UserFollowApiR POST DELETE
+
+/api/tags TagsR GET

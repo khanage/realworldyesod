@@ -85,3 +85,9 @@ instance FromJSON UserLogin where
     UserLogin <$> u .: "email" <*> u .: "password"
   parseJSON _ = error "Expecting an Object"
 
+data TagResult = TagResult
+  { tag :: Text
+  } deriving (Eq, Show)
+
+instance ToJSON TagResult where
+  toJSON TagResult{..} = toJSON tag
