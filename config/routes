@@ -7,3 +7,5 @@
 /api/profiles/#Text/follow UserFollowApiR POST DELETE
 
 /api/tags TagsR GET
+
+/api/articles/#Text SingleArticleR GET

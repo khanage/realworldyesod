@@ -3,6 +3,7 @@ module ApiTypes where
 
 import Import
 import Data.Aeson ((.:?))
+import qualified Data.Aeson.Types as Aeson (Pair)
 
 data UserProfile = UserProfile
   { username :: Text
@@ -50,7 +51,6 @@ instance FromJSON IncomingUserUpdate where
        <*> v .:? "bio"
   parseJSON _ = error "Only parses from objects"
 
-
 data ApiUser = ApiUser
   { email :: Text
   , token :: Text
@@ -84,6 +84,53 @@ instance FromJSON UserLogin where
     u <- j .: "user"
     UserLogin <$> u .: "email" <*> u .: "password"
   parseJSON _ = error "Expecting an Object"
+
+data AuthorResult = AuthorResult
+  { username :: Text
+  , bio :: Maybe Text
+  , image :: Maybe Text
+  , following :: Bool
+  } deriving (Eq, Show)
+
+instance ToJSON AuthorResult where
+  toJSON AuthorResult{..} =
+    object $ [ "username" .= username
+             , "bool" .= following
+             ] & withMaybe "bio" bio
+               & withMaybe "image" image
+
+withMaybe :: ToJSON a => Text -> Maybe a -> [Aeson.Pair] -> [Aeson.Pair]
+withMaybe named ma v =
+  maybe id (\value -> (:) (named .= value)) ma $ v
+
+data ArticleResult = ArticleResult
+  { slug :: Text
+  , title :: Text
+  , description :: Text
+  , body :: Text
+  , tagList :: [TagResult]
+  , createdAt :: UTCTime
+  , updatedAt :: UTCTime
+  , favorited :: Bool
+  , favoritesCount :: Int
+  , author :: AuthorResult
+  } deriving (Eq, Show)
+
+instance ToJSON ArticleResult where
+  toJSON ArticleResult{..} =
+    object [ "article" .= object
+             [ "slug" .= slug
+             , "title" .= title
+             , "description" .= description
+             , "body" .= body
+             , "tagList" .= tagList
+             , "createdAt" .= createdAt
+             , "updatedAt" .= updatedAt
+             , "favorited" .= favorited
+             , "favouritesCount" .= favoritesCount
+             , "author" .= author
+             ]
+           ]
 
 data TagResult = TagResult
   { tag :: Text

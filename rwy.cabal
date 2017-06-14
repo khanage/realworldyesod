@@ -24,12 +24,15 @@ library
                      Tokens
                      Types.Password
                      Users
+                     Articles
+                     Tags
                      ValidationErrors
                      JwtKeys
                      Handler.Home
                      Handler.UserApi
                      Handler.FollowUser
                      Handler.Tags
+                     Handler.Articles
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -54,6 +57,7 @@ library
                 TupleSections
                 RecordWildCards
                 CPP
+                ScopedTypeVariables
 
     build-depends:
                    -- Due to a bug in GHC 8.0.1, we block its usage
@@ -104,6 +108,7 @@ library
                  , exceptions
                  , transformers
                  , case-insensitive
+                 , esqueleto
 executable         rwy
     if flag(library-only)
         Buildable: False

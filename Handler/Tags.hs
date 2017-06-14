@@ -2,16 +2,10 @@
 module Handler.Tags where
 
 import Import
-import ApiTypes (TagResult(..))
+import Tags (tagToTagResult)
 
 getTagsR :: Handler Value
 getTagsR = do
   logDebug $ "Loading tags"
   tags :: [Entity Tag] <- runDB $ selectList [] []
-  pure $ toJSON $ tagToResult . entityVal <$> tags
-
-tagToResult
-  :: Tag
-  -> TagResult
-tagToResult Tag{..} =
-  TagResult { tag = _tagName }
+  pure $ toJSON $ tagToTagResult . entityVal <$> tags

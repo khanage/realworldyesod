@@ -190,22 +190,26 @@ checkAuthorization
   -> Handler AuthResult
 checkAuthorization route _writeReq =
   case route of
-    HomeR -> pure Authorized
-    (StaticR _) -> pure Authorized
-    (UserProfileApiR _) -> pure Authorized
-    LoginApiR -> pure Authorized
+    HomeR -> noAuthNeeded
+    (StaticR _) -> noAuthNeeded
+    (UserProfileApiR _) -> noAuthNeeded
+    LoginApiR -> noAuthNeeded
     (UserFollowApiR _) -> requireValidJwt
+    TagsR -> noAuthNeeded
+    (SingleArticleR _) -> noAuthNeeded
     UserApiR -> do
       method <- waiRequest <&> requestMethod
       logDebug $ "Authorizing method " <> tshow method
       case method of
         "GET" -> requireValidJwt
-        "POST" -> pure Authorized
+        "POST" -> noAuthNeeded
         "PUT" -> requireValidJwt
         unknownMethod -> do
           let msg = "Failed to deal with method " <> tshow unknownMethod
           logInfo msg
           pure $ Unauthorized ""
+  where
+    noAuthNeeded = pure Authorized
 
 
 -- | Access function to determine if a user is logged in.

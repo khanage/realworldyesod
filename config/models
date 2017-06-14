@@ -22,10 +22,12 @@ Following
 Article
   authorId UserId
   slug Text
+  title Text
   description Text
   body Text
   createdAt UTCTime
   updatedAt UTCTime
+  UniqueSlug slug
   deriving Eq
   deriving Show
 Tag
